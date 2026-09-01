@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>xBoard PHP Partner SDK — Client handoff</title>
+  <style>
+    :root {
+      --ink: #cccccc;
+      --muted: #9d9d9d;
+      --line: #3c3c3c;
+      --paper: #1f1f1f;
+      --card: #252526;
+      --accent: #4fc1ff;
+      --accent-soft: #1b3a4a;
+      --warn: #ce9178;
+      --warn-soft: #3a2c28;
+      --code-bg: #1f1f1f;
+      --code-fg: #d4d4d4;
+      --inline-code: #2b2b2b;
+      --step-fg: #1f1f1f;
+      --radius: 8px;
+      --kw: #569cd6;
+      --str: #ce9178;
+      --fn: #dcdcaa;
+      --type: #4ec9b0;
+      --var: #9cdcfe;
+      --num: #b5cea8;
+      --cmt: #6a9955;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      color-scheme: dark;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    .wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    header.cover {
+      padding: 2.5rem 0 2rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 2rem;
+    }
+
+    .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin: 0 0 0.75rem;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      line-height: 1.2;
+      margin: 0 0 0.75rem;
+      font-weight: 650;
+      color: #fff;
+    }
+
+    .lede {
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin: 0;
+      max-width: 40rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      margin-top: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin: 2.2rem 0 0.7rem;
+      padding-top: 0.4rem;
+      color: #fff;
+      font-weight: 650;
+      break-after: avoid;
+    }
+
+    h3 {
+      font-size: 1rem;
+      margin: 1.4rem 0 0.4rem;
+      letter-spacing: -0.01em;
+      color: #fff;
+      font-weight: 600;
+      break-after: avoid;
+    }
+
+    p,
+    li {
+      font-size: 0.98rem;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    .toc {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+    }
+
+    .toc ol {
+      margin: 0.4rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: var(--ink);
+    }
+
+    .toc a:hover {
+      color: var(--accent);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .do {
+      border-left: 3px solid var(--type);
+    }
+
+    .dont {
+      border-left: 3px solid var(--warn);
+    }
+
+    .callout {
+      background: var(--accent-soft);
+      border-radius: var(--radius);
+      padding: 0.9rem 1.1rem;
+      margin: 1rem 0;
+      border: 1px solid #2a5470;
+    }
+
+    .callout p {
+      margin: 0;
+    }
+
+    .callout strong {
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.35rem;
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      background: var(--card);
+    }
+
+    th,
+    td {
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 0.55rem 0.65rem;
+      vertical-align: top;
+    }
+
+    th {
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    code,
+    kbd {
+      font-family: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.86em;
+    }
+
+    p code,
+    li code,
+    td code {
+      background: var(--inline-code);
+      padding: 0.12em 0.38em;
+      border-radius: 4px;
+      color: var(--var);
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-fg);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      overflow: auto;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      break-inside: avoid;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .token.comment {
+      color: var(--cmt);
+    }
+
+    .token.string {
+      color: var(--str);
+    }
+
+    .token.keyword {
+      color: var(--kw);
+    }
+
+    .token.function {
+      color: var(--fn);
+    }
+
+    .token.class-name {
+      color: var(--type);
+    }
+
+    .token.variable {
+      color: var(--var);
+    }
+
+    .token.number {
+      color: var(--num);
+    }
+
+    .token.operator,
+    .token.punctuation {
+      color: var(--code-fg);
+    }
+
+    .token.namespace {
+      color: var(--type);
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .print-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+
+    @media print {
+      @page {
+        size: Letter;
+        margin: 0.7in 0.7in 0.8in;
+      }
+
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .wrap {
+        max-width: none;
+        padding: 0;
+      }
+
+      .print-hint {
+        display: none;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      pre,
+      table,
+      .card {
+        break-inside: avoid;
+      }
+
+      .toc {
+        break-after: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header class="cover">
+      <p class="eyebrow">Partner handoff · xBoard</p>
+      <h1>PHP Partner SDK</h1>
+      <p class="lede">Create and update posts on a customer’s shared or private board.</p>
+      <div class="meta">
+        <span>Package: <code>xboard/php</code></span>
+        <span>PHP 8.2+</span>
+        <span>Server-side only</span>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Contents">
+      <strong class="eyebrow">Contents</strong>
+      <ol>
+        <li><a href="#terms">Terminology</a></li>
+        <li><a href="#prereqs">Prerequisites</a></li>
+        <li><a href="#setup">Setup</a></li>
+        <li><a href="#write">Write a post</a></li>
+        <li><a href="#read">Read it back</a></li>
+        <li><a href="#errors">Errors</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="terms">1. Terminology</h2>
+    <p>These are the words this SDK uses. Everything you write is a post on a customer’s shared or private board.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3><code>externalCustomerId</code></h3>
+        <p>Your CRM id for the customer, for example <code>CRM-1001</code>.</p>
+      </div>
+      <div class="card">
+        <h3><code>BoardType</code></h3>
+        <p>Where the post lives for that customer.</p>
+        <p><code>BoardType::Shared</code><br />
+          <code>BoardType::Private</code>
+        </p>
+      </div>
+      <div class="card">
+        <h3>Post</h3>
+        <p>One record you create. It has a title, notes, and files.</p>
+      </div>
+      <div class="card">
+        <h3>Note and file</h3>
+        <p>Text and attachments on a post. <code>FileUpload</code> is an in-memory file (bytes, name, type).</p>
+      </div>
+    </div>
+
+    <h2 id="prereqs">2. Prerequisites</h2>
+    <ul>
+      <li>PHP 8.2+ and Composer</li>
+      <li>Server-side only (not the browser)</li>
+      <li>An API key: <code>xbk_test_…</code> or <code>xbk_live_…</code></li>
+      <li>Gateway base URL (origin only):
+        <ul>
+          <li>Dev: <code>https://api.dev.sidekiq.com</code></li>
+          <li>Prod: <code>https://api.xboard.com</code></li>
+        </ul>
+      </li>
+      <li>The customer already exists in xBoard. You will identify them with <code>externalCustomerId</code>.</li>
+    </ul>
+
+    <h2 id="setup">3. Setup</h2>
+    <h3>Install</h3>
+    <pre><code class="language-bash">composer require xboard/php</code></pre>
+
+    <pre><code class="language-php">use XBoard\BoardType;
+use XBoard\FileUpload;
+use XBoard\XBoard;
+
+$client = new XBoard([
+    'apiKey'  => getenv('XBOARD_API_KEY'),
+    'baseUrl' => getenv('XBOARD_BASE_URL'),
+]);
+$posts = $client->customers->posts();</code></pre>
+
+    <h2 id="write">4. Write a post</h2>
+    <p>One chain. Call order is the content order. <code>setTitle()</code> at most once. <code>create()</code> always
+      makes a new post. Each step is its own HTTP call; the first error stops the sequence, and whatever already landed
+      stays.</p>
+
+    <pre><code class="language-php">$post = $posts
+    ->compose('CRM-1001', BoardType::Shared)
+    ->setTitle('Site visit')
+    ->addNote('Arrived on site.')
+    ->addFile(new FileUpload("hello\n", 'hello.txt', 'text/plain'))
+    ->addNote('Photos to follow.')
+    ->create();</code></pre>
+
+    <p>To add more later, compose on that same <code>$post</code>. <code>update()</code> never creates. Title replaces;
+      notes and files only append.</p>
+
+    <pre><code class="language-php">$post->compose()
+    ->setTitle('Site visit — complete')
+    ->addNote('Customer signed off.')
+    ->addFile(new FileUpload("signed\n", 'signoff.txt', 'text/plain'))
+    ->update();</code></pre>
+
+    <p>If you only have a post id (for example from storage), load it first, then use the same compose chain:</p>
+
+    <pre><code class="language-php">$post = $posts->get($postId);
+$post->compose()
+    ->addNote('Follow-up.')
+    ->update();</code></pre>
+
+    <h2 id="read">5. Read it back</h2>
+    <pre><code class="language-php">$listed = $posts->list('CRM-1001', BoardType::Shared);
+$post   = $listed[0]; // first post
+$notes  = $post->notes()->list(); // notes and files on that post</code></pre>
+
+    <h2 id="errors">6. Errors</h2>
+    <p>Failed HTTP calls throw <code>XBoardError</code> (and subclasses). Bad arguments throw
+      <code>\InvalidArgumentException</code>.</p>
+    <pre><code class="language-php">use XBoard\Errors\XBoardError;
+
+try {
+    $posts
+        ->compose('CRM-1001', BoardType::Shared)
+        ->setTitle('Kickoff')
+        ->create();
+} catch (XBoardError $err) {
+    // $err->statusCode, $err->errorCode, $err->requestId
+}</code></pre>
+
+    <footer>
+      xBoard PHP Partner SDK · Client handoff · Package <code>xboard/php</code>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var KEYWORDS = /^(use|new|echo|try|catch|return|function|class|const|true|false|null|as)$/;
+
+      function escapeHtml(s) {
+        return s.replace(/[&<>]/g, function (c) {
+          return c === '&' ? '&amp;' : c === '<' ? '&lt;' : '&gt;';
+        });
+      }
+
+      function span(kind, text) {
+        return '<span class="token ' + kind + '">' + escapeHtml(text) + '</span>';
+      }
+
+      function highlightPHP(src) {
+        var out = '';
+        var i = 0;
+        var n = src.length;
+
+        function peek(len) {
+          return src.slice(i, i + len);
+        }
+
+        while (i < n) {
+          var ch = src[i];
+
+          if (ch === '/' && peek(2) === '//') {
+            var cEnd = src.indexOf('\n', i);
+            if (cEnd < 0) cEnd = n;
+            out += span('comment', src.slice(i, cEnd));
+            i = cEnd;
+            continue;
+          }
+
+          if (ch === '#') {
+            var hEnd = src.indexOf('\n', i);
+            if (hEnd < 0) hEnd = n;
+            out += span('comment', src.slice(i, hEnd));
+            i = hEnd;
+            continue;
+          }
+
+          if (ch === "'" || ch === '"') {
+            var q = ch;
+            var j = i + 1;
+            while (j < n) {
+              if (src[j] === '\\' && j + 1 < n) {
+                j += 2;
+                continue;
+              }
+              if (src[j] === q) {
+                j += 1;
+                break;
+              }
+              j += 1;
+            }
+            out += span('string', src.slice(i, j));
+            i = j;
+            continue;
+          }
+
+          if (ch === '$' && /[A-Za-z_]/.test(src[i + 1] || '')) {
+            var k = i + 1;
+            while (k < n && /[\w]/.test(src[k])) k += 1;
+            out += span('variable', src.slice(i, k));
+            i = k;
+            continue;
+          }
+
+          if (/[A-Za-z_\\]/.test(ch)) {
+            var m = i;
+            while (m < n && /[\w\\]/.test(src[m])) m += 1;
+            var word = src.slice(i, m);
+            var rest = src.slice(m);
+            var afterSpace = rest.match(/^\s*/);
+            var next = rest.slice((afterSpace && afterSpace[0].length) || 0);
+
+            if (KEYWORDS.test(word)) {
+              out += span('keyword', word);
+            } else if (word.indexOf('\\') !== -1 || /^[A-Z]/.test(word)) {
+              out += span('class-name', word);
+            } else if (next.charAt(0) === '(') {
+              out += span('function', word);
+            } else {
+              out += escapeHtml(word);
+            }
+            i = m;
+            continue;
+          }
+
+          if (/[0-9]/.test(ch)) {
+            var d = i;
+            while (d < n && /[0-9]/.test(src[d])) d += 1;
+            out += span('number', src.slice(i, d));
+            i = d;
+            continue;
+          }
+
+          out += escapeHtml(ch);
+          i += 1;
+        }
+        return out;
+      }
+
+      function highlightBash(src) {
+        return src.replace(/^(\s*)(\S+)(\s+)(\S[\s\S]*)$/, function (_, a, cmd, sp, rest) {
+          return escapeHtml(a) + span('function', cmd) + escapeHtml(sp) + span('string', rest);
+        });
+      }
+
+      document.querySelectorAll('pre code.language-php').forEach(function (el) {
+        el.innerHTML = highlightPHP(el.textContent);
+      });
+      document.querySelectorAll('pre code.language-bash').forEach(function (el) {
+        el.innerHTML = highlightBash(el.textContent);
+      });
+    })();
+  </script>
+</body>
+
+</html>

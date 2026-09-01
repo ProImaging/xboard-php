@@ -1,0 +1,65 @@
+{
+    "name": "xboard/php",
+    "description": "Official PHP SDK for the xBoard",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "xboard",
+        "api",
+        "sdk"
+    ],
+    "authors": [
+        {
+            "name": "xBoard"
+        }
+    ],
+    "homepage": "https://github.com/ProImaging/xboard-php",
+    "support": {
+        "issues": "https://github.com/ProImaging/xboard-php/issues",
+        "source": "https://github.com/ProImaging/xboard-php"
+    },
+    "require": {
+        "php": "^8.2",
+        "guzzlehttp/guzzle": "^7.9",
+        "psr/log": "^3.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.75",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "XBoard\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "XBoard\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "analyse": "phpstan analyse --memory-limit=512M",
+        "lint": "php-cs-fixer fix --dry-run --diff",
+        "lint:fix": "php-cs-fixer fix",
+        "test": "phpunit",
+        "validate-ci": [
+            "@test",
+            "@analyse",
+            "@lint"
+        ]
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        },
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
