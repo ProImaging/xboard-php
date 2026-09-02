@@ -419,7 +419,14 @@ $client = new XBoard([
     'apiKey'  => getenv('XBOARD_API_KEY'),
     'baseUrl' => getenv('XBOARD_BASE_URL'),
 ]);
-$posts = $client->customers->posts();</code></pre>
+$posts = $client->customers->posts(); // handle only — does not list or fetch posts</code></pre>
+
+    <div class="callout">
+      <p><strong>Not a list</strong>
+        <code>$client-&gt;customers-&gt;posts()</code> is a resource handle. It does not list posts and does not call the
+        API. Create, compose, and list always take <code>externalCustomerId</code> and <code>boardType</code>. There is
+        no account-wide post list.</p>
+    </div>
 
     <h2 id="write">4. Write a post</h2>
     <p>One chain. Call order is the content order. <code>setTitle()</code> at most once. <code>create()</code> always
@@ -451,8 +458,10 @@ $post->compose()
     ->update();</code></pre>
 
     <h2 id="read">5. Read it back</h2>
-    <pre><code class="language-php">$listed = $posts->list('CRM-1001', BoardType::Shared);
-$post   = $listed[0]; // first post
+    <p>List is scoped to one customer and board. Pass both arguments every time. There is no account-wide post list.
+      <code>$posts-&gt;get($postId)</code> loads one post by id; it is not a list.</p>
+    <pre><code class="language-php">$listed = $posts->list('CRM-1001', BoardType::Shared); // required: customer + board
+$post   = $listed[0]; // first post for that customer and board
 $notes  = $post->notes()->list(); // notes and files on that post</code></pre>
 
     <h2 id="errors">6. Errors</h2>

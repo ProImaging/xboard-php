@@ -24,7 +24,7 @@ $client = new XBoard([
     'baseUrl' => getenv('XBOARD_BASE_URL'),
 ]);
 
-$posts = $client->customers->posts();
+$posts = $client->customers->posts(); // handle only — does not list or fetch posts
 
 $post = $posts
     ->compose('CRM-1001', BoardType::Shared)
@@ -32,6 +32,12 @@ $post = $posts
     ->addNote('Hello from the partner SDK')
     ->addFile(new FileUpload("hello\n", 'hello.txt', 'text/plain'))
     ->create();
+```
+
+`$client->customers->posts()` is a resource handle. It does not list posts and does not call the API. Create, compose, and list always take `externalCustomerId` and `boardType`. There is no account-wide post list.
+
+```php
+$listed = $posts->list('CRM-1001', BoardType::Shared);
 ```
 
 Copy `.env.example` to `.env` for local examples.
