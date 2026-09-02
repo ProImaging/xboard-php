@@ -22,7 +22,8 @@ Requires PHP 8.2+ and Composer.
 | `make test` / `make lint` / `make analyse` | Common tasks |
 | `make run-example create-customer-post` | Run `examples/create-customer-post.php` |
 | `make run-example compose-create` | Run `examples/compose-create.php` |
-| `make run-example compose-update` | Run `examples/compose-update.php` |
+| `make run-example compose-update` | Run `examples/compose-update.php` (`XBOARD_POST_ID`) |
+| `make smoke` | Run every partner example against `.env` |
 | `composer validate-ci` | Same as `make validate` |
 
 ## Code guidelines

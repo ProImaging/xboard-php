@@ -15,11 +15,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `$post->notes()->list()` includes notes and files
 - Optional `$client->customers->board($externalCustomerId, $boardType)` ensure-only path
 - `XBoard\BoardType` (`Shared` / `Private`) for partner `boardType`
+- `$client->customers->list()` — CRM customer list (`POST /people/account/customers`, `customers:read`)
 
 ### Removed
 
 - Public generic boards/posts/notes/files CRUD
-- `$client->customers->list()` and note/file delete
+- Note/file delete
 - `save()` — use `create()` vs `update()` only
 
 [0.1.0]: https://github.com/ProImaging/xboard-php/releases/tag/v0.1.0

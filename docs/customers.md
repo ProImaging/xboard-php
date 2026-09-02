@@ -2,7 +2,16 @@
 
 Identify a customer with `externalCustomerId` and `boardType` (`BoardType::Shared` or `BoardType::Private`). Customers are created in xBoard, not with this SDK.
 
-`$client->customers->posts()` is a resource handle. It does not list posts and does not call the API. Create, compose, and list always take `externalCustomerId` and `boardType`. There is no account-wide post list.
+List CRM customers with `$client->customers->list()` (`customers:read`). `$client->customers->posts()` is a resource handle. It does not list posts and does not call the API. Create, compose, and list posts always take `externalCustomerId` and `boardType`. There is no account-wide post list.
+
+## List customers
+
+```php
+$listed = $client->customers->list(['limit' => 50, 'search' => 'acme']);
+$items = $listed['data']['items'];
+```
+
+Defaults: `limit` 50, `sortBy` `recentlyUpdated`, `sortOrder` `desc`. Optional `cursor` and `search`.
 
 ## Write a post
 
@@ -61,4 +70,4 @@ $notes  = $post->notes()->list();
 
 `$posts->get($postId)` loads one post by id. It is not a list and does not take `externalCustomerId`.
 
-See [`examples/compose-create.php`](../examples/compose-create.php), [`examples/compose-update.php`](../examples/compose-update.php), and [`examples/create-customer-post.php`](../examples/create-customer-post.php).
+See [`examples/list-customers.php`](../examples/list-customers.php), [`examples/list-posts.php`](../examples/list-posts.php), [`examples/list-notes.php`](../examples/list-notes.php), [`examples/compose-create.php`](../examples/compose-create.php), [`examples/compose-update.php`](../examples/compose-update.php), and [`examples/create-customer-post.php`](../examples/create-customer-post.php).

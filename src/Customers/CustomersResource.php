@@ -33,6 +33,33 @@ final class CustomersResource
     }
 
     /**
+     * List CRM customers on the account (`customers:read`).
+     *
+     * @param array{limit?: int, cursor?: string, search?: string, sortBy?: string, sortOrder?: string} $params
+     * @param RequestOptions $options
+     */
+    public function list(array $params = [], array $options = []): mixed
+    {
+        $token = ($this->getAccessToken)();
+        $req = [
+            'service' => 'people',
+            'path' => '/account/customers',
+            'method' => 'POST',
+            'authToken' => $token,
+            'body' => array_merge([
+                'limit' => 50,
+                'sortBy' => 'recentlyUpdated',
+                'sortOrder' => 'desc',
+            ], $params),
+        ];
+        if ($options !== []) {
+            $req['options'] = $options;
+        }
+
+        return $this->http->request($req);
+    }
+
+    /**
      * Optional ensure-only path when you need the typed board without creating a post.
      * Posting does not require this call — `posts()->create()` / `compose()->create()` auto-ensure.
      */

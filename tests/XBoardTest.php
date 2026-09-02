@@ -52,6 +52,39 @@ final class XBoardTest extends TestCase
         ], json_decode((string) $create->getBody(), true, 512, JSON_THROW_ON_ERROR));
     }
 
+    public function testListsCustomersWithDefaultSort(): void
+    {
+        $history = new \ArrayObject();
+        $client = MockClient::xboard([
+            MockClient::exchangeOk(),
+            MockClient::json(200, [
+                'message' => 'Customers fetched.',
+                'status' => 1,
+                'data' => [
+                    'items' => [
+                        ['id' => 'c1', 'displayName' => 'Acme', 'externalID' => 'CRM-1001'],
+                    ],
+                    'hasMore' => false,
+                ],
+            ]),
+        ], $history);
+
+        $listed = $client->customers->list(['search' => 'acme']);
+        $this->assertIsArray($listed);
+        $this->assertSame('c1', $listed['data']['items'][0]['id']);
+        $this->assertCount(2, $history);
+
+        $list = MockClient::requestAt($history, 1);
+        $this->assertSame('POST', $list->getMethod());
+        $this->assertStringEndsWith('/people/account/customers', (string) $list->getUri());
+        $this->assertSame([
+            'limit' => 50,
+            'sortBy' => 'recentlyUpdated',
+            'sortOrder' => 'desc',
+            'search' => 'acme',
+        ], json_decode((string) $list->getBody(), true, 512, JSON_THROW_ON_ERROR));
+    }
+
     public function testComposeCreateAutoEnsuresThenAppendsPartsInOrder(): void
     {
         $history = new \ArrayObject();
