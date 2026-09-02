@@ -6,5 +6,5 @@ namespace XBoard;
 
 final class Version
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.1.1';
 }
