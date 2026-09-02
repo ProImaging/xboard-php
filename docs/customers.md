@@ -2,12 +2,14 @@
 
 Identify a customer with `externalCustomerId` and `boardType` (`BoardType::Shared` or `BoardType::Private`). Customers are created in xBoard, not with this SDK.
 
+`$client->customers->posts()` is a resource handle. It does not list posts and does not call the API. Create, compose, and list always take `externalCustomerId` and `boardType`. There is no account-wide post list.
+
 ## Write a post
 
 ```php
 use XBoard\BoardType;
 
-$posts = $client->customers->posts();
+$posts = $client->customers->posts(); // handle only — does not list or fetch posts
 
 $post = $posts->compose(externalCustomerId: 'CRM-1001', boardType: BoardType::Shared)
     ->setTitle('Kickoff')              // at most once; extra setTitle() throws
@@ -47,12 +49,16 @@ Composer parts are sent in order. On the first error the sequence stops; the ret
 
 ## List posts and contents
 
+List is scoped to one customer and board. Pass both arguments every time:
+
 ```php
 $listed = $posts->list('CRM-1001', BoardType::Shared);
 $post   = $listed[0];
 $notes  = $post->notes()->list();
 ```
 
-`$listed` is a list of `Post` objects. `$notes['data']['info']` includes notes and files.
+`$listed` is a list of `Post` objects for that customer and `boardType` only. `$notes['data']['info']` includes notes and files.
+
+`$posts->get($postId)` loads one post by id. It is not a list and does not take `externalCustomerId`.
 
 See [`examples/compose-create.php`](../examples/compose-create.php), [`examples/compose-update.php`](../examples/compose-update.php), and [`examples/create-customer-post.php`](../examples/create-customer-post.php).

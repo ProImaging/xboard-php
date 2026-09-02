@@ -11,4 +11,4 @@ $post->compose()
     ->update();
 ```
 
-`$post->notes()->list()` returns notes and files on that post (`data.info`). See [Customers](customers.md).
+`$post->notes()->list()` returns notes and files on that post (`data.info`). It is not a customer post list — that is `$posts->list('CRM-1001', BoardType::Shared)`. See [Customers](customers.md).

@@ -40,7 +40,7 @@ $client = new XBoard([
 ]);
 ```
 
-The SDK authenticates with the API key and refreshes credentials as needed.
+The SDK authenticates with the API key and refreshes credentials as needed. `$client->customers->posts()` is a handle, not a list — see [Read posts](#read-posts).
 
 ## Write a post
 
@@ -48,7 +48,7 @@ The SDK authenticates with the API key and refreshes credentials as needed.
 use XBoard\BoardType;
 use XBoard\FileUpload;
 
-$posts = $client->customers->posts();
+$posts = $client->customers->posts(); // handle only — does not list or fetch posts
 
 $post = $posts
     ->compose('CRM-1001', BoardType::Shared)
@@ -93,13 +93,15 @@ $post->compose()
 
 ## Read posts
 
+List is scoped to one customer and board. Pass both arguments every time:
+
 ```php
 $listed = $posts->list('CRM-1001', BoardType::Shared);
 $post   = $listed[0];
 $notes  = $post->notes()->list();
 ```
 
-`$listed` is a list of `Post` objects. `$notes['data']['info']` contains notes and files on that post.
+`$listed` is a list of `Post` objects for that customer and `boardType` only. `$notes['data']['info']` contains notes and files on that post. `$posts->get($postId)` loads one post by id; it is not a list.
 
 Runnable copies live in [`examples/`](../examples): `compose-create.php`, `compose-update.php`, and `create-customer-post.php`.
 
