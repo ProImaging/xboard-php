@@ -45,9 +45,10 @@ Copy `.env.example` to `.env` for local examples.
 ```bash
 make help
 make install
+make run-example list-customers
 make run-example compose-create
-make run-example compose-update
-make run-example create-customer-post
+XBOARD_POST_ID=<id> make run-example compose-update
+make smoke
 ```
 
 ## Documentation
@@ -65,8 +66,11 @@ A printable partner sheet is in [docs/partner-handoff.html](docs/partner-handoff
 
 ## Examples
 
+- [list-customers.php](examples/list-customers.php) — list CRM customers
+- [list-posts.php](examples/list-posts.php) — list posts on one customer board
+- [list-notes.php](examples/list-notes.php) — list notes and files on a post (`XBOARD_POST_ID`)
 - [compose-create.php](examples/compose-create.php) — create a post with notes and a file
-- [compose-update.php](examples/compose-update.php) — append to an existing post
+- [compose-update.php](examples/compose-update.php) — append to an existing post (`XBOARD_POST_ID`)
 - [create-customer-post.php](examples/create-customer-post.php) — titled post without composer parts
 
 ## Development

@@ -103,7 +103,7 @@ $notes  = $post->notes()->list();
 
 `$listed` is a list of `Post` objects for that customer and `boardType` only. `$notes['data']['info']` contains notes and files on that post. `$posts->get($postId)` loads one post by id; it is not a list.
 
-Runnable copies live in [`examples/`](../examples): `compose-create.php`, `compose-update.php`, and `create-customer-post.php`.
+Runnable copies live in [`examples/`](../examples). `compose-update.php` and `list-notes.php` need `XBOARD_POST_ID`. `make smoke` runs every use case and threads the compose-create id into those scripts.
 
 ## Next steps
 
