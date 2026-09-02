@@ -1,0 +1,116 @@
+name: PR Merge Check - xboard-php
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - "main"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+env:
+  TRIVY_VER: "v0.69.2"
+  GH_SEC_REPORT: false
+  TRIVY_SEVERITY: "HIGH,CRITICAL"
+  TRIVY_REPORT_FILE: "trivy-scan-result"
+
+jobs:
+  sidekiq-build-check:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.4']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Install
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Validate
+        run: composer validate-ci
+
+  sidekiq-trivy-check:
+    permissions:
+      contents: 'read'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: true
+
+      - name: Manual Trivy Setup
+        uses: aquasecurity/setup-trivy@v0.2.6
+        with:
+          cache: true
+          version: ${{ env.TRIVY_VER }}
+
+      - name: Trivy Scan - Text Security Report
+        id: trivy_scan_txt
+        if: ${{ env.GH_SEC_REPORT == 'false' }}
+        uses: aquasecurity/trivy-action@v0.35.0
+        continue-on-error: true
+        with:
+          ignore-unfixed: true
+          skip-setup-trivy: true
+          scan-type: "fs"
+          cache: "false"
+          format: "table"
+          output: "${{ env.TRIVY_REPORT_FILE }}.txt"
+          severity: "${{ env.TRIVY_SEVERITY }}"
+          exit-code: 1
+
+      - name: Upload Report - Text Security Report
+        if: ${{ env.GH_SEC_REPORT == 'false' && steps.trivy_scan_txt.outcome  == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.TRIVY_REPORT_FILE }}"
+          path: "${{ env.TRIVY_REPORT_FILE }}.txt"
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Trivy Scan - GitHub Security Report
+        id: trivy_scan_sec
+        if: ${{ env.GH_SEC_REPORT == 'true' }}
+        uses: aquasecurity/trivy-action@v0.35.0
+        with:
+          ignore-unfixed: true
+          skip-setup-trivy: true
+          scan-type: "fs"
+          cache: "false"
+          format: "sarif"
+          output: "${{ env.TRIVY_REPORT_FILE }}.sarif"
+          severity: "${{ env.TRIVY_SEVERITY }}"
+          timeout: "${{ env.TRIVY_TIMEOUT }}"
+          exit-code: 1
+
+      - name: Upload Report - GitHub Security Report
+        if: ${{ env.GH_SEC_REPORT == 'true' && steps.trivy_scan_sec.outcome  == 'failure' }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "${{ env.TRIVY_REPORT_FILE }}.sarif"
+
+      - name: Failing the Job
+        if: ${{ steps.trivy_scan_txt.outcome  == 'failure' || steps.trivy_scan_sec.outcome  == 'failure' }}
+        shell: bash
+        run: |-
+          echo "Vulnerabilities Found.....!"
+          exit 1
