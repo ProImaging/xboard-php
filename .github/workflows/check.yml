@@ -42,9 +42,11 @@ jobs:
           tools: composer:v2
 
       - name: Install
+        shell: bash
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Validate
+        shell: bash
         run: composer validate-ci
 
   sidekiq-trivy-check:
