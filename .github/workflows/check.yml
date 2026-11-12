@@ -60,7 +60,7 @@ jobs:
           persist-credentials: true
 
       - name: Manual Trivy Setup
-        uses: aquasecurity/setup-trivy@v0.2.6
+        uses: aquasecurity/setup-trivy@v0.3.1
         with:
           cache: true
           version: ${{ env.TRIVY_VER }}
