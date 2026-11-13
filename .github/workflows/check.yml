@@ -31,7 +31,7 @@ jobs:
         php: ['8.2', '8.4']
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -55,12 +55,12 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: true
 
       - name: Manual Trivy Setup
-        uses: aquasecurity/setup-trivy@v0.2.6
+        uses: aquasecurity/setup-trivy@v0.3.1
         with:
           cache: true
           version: ${{ env.TRIVY_VER }}
@@ -68,7 +68,7 @@ jobs:
       - name: Trivy Scan - Text Security Report
         id: trivy_scan_txt
         if: ${{ env.GH_SEC_REPORT == 'false' }}
-        uses: aquasecurity/trivy-action@v0.35.0
+        uses: aquasecurity/trivy-action@v0.36.0
         continue-on-error: true
         with:
           ignore-unfixed: true
@@ -82,7 +82,7 @@ jobs:
 
       - name: Upload Report - Text Security Report
         if: ${{ env.GH_SEC_REPORT == 'false' && steps.trivy_scan_txt.outcome  == 'failure' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: "${{ env.TRIVY_REPORT_FILE }}"
           path: "${{ env.TRIVY_REPORT_FILE }}.txt"
@@ -92,7 +92,7 @@ jobs:
       - name: Trivy Scan - GitHub Security Report
         id: trivy_scan_sec
         if: ${{ env.GH_SEC_REPORT == 'true' }}
-        uses: aquasecurity/trivy-action@v0.35.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           ignore-unfixed: true
           skip-setup-trivy: true
@@ -106,7 +106,7 @@ jobs:
 
       - name: Upload Report - GitHub Security Report
         if: ${{ env.GH_SEC_REPORT == 'true' && steps.trivy_scan_sec.outcome  == 'failure' }}
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: "${{ env.TRIVY_REPORT_FILE }}.sarif"
 
